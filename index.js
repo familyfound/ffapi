@@ -10,7 +10,7 @@ settings.add({
   name: 'main',
   settings: [{
     name: 'ffhome',
-    value: 'http://familyfound.local:3000/',
+    value: '/',
     type: 'text'
   }]
 });
