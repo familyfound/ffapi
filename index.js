@@ -8,10 +8,11 @@ var angular = require('angularjs')
 
 settings.add({
   name: 'main',
-  settings: {
-    ffhome: 'http://familyfound.local:3000/',
+  settings: [{
+    name: 'ffhome',
+    value: 'http://familyfound.local:3000/',
     type: 'text'
-  }
+  }]
 });
 
 angular.module('ffapi', [])
@@ -24,12 +25,12 @@ angular.module('ffapi', [])
   })
   .factory('ffapi', function (ffauthorize) {
     return function (resource, options, next) {
-      var url = settings.get('ffhome') + 'api/' + name
+      var url = settings.get('main.ffhome') + 'api/' + name
         , req;
       if (options) {
-        req = authorize(request.post(url).send(options));
+        req = ffauthorize(request.post(url).send(options));
       } else {
-        req = authorize(request.get(url));
+        req = ffauthorize(request.get(url));
       }
       req.set('Accept', 'application/json')
         .end(function (err, res) {
