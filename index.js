@@ -24,8 +24,8 @@ angular.module('ffapi', [])
     };
   })
   .factory('ffapi', function (ffauthorize) {
-    return function (resource, options, next) {
-      var url = settings.get('main.ffhome') + 'api/' + name
+    var ffapi = function (resource, options, next) {
+      var url = settings.get('main.ffhome') + 'api/' + resource
         , req;
       if (options) {
         req = ffauthorize(request.post(url).send(options));
@@ -38,6 +38,17 @@ angular.module('ffapi', [])
           next && next(res.body);
         });
     };
+    var relation_cache = {};
+    ffapi.relation = function (id, next) {
+      if (relation_cache[id]) {
+        return next(relation_cache[id], true);
+      }
+      ffapi('person/relations/' + id, null, function (data) {
+        relation_cache[id] = data;
+        return next(data, false);
+      });
+    };
+    return ffapi;
   })
   .factory('ffperson', function (ffapi) {
     // TODO: use localStorage? no. Refresh should give them new data.
