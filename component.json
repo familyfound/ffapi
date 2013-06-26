@@ -1,0 +1,19 @@
+{
+  "name": "ffapi",
+  "repo": "familyfound/ffapi",
+  "description": "interaction with familysearch",
+  "version": "0.0.1",
+  "keywords": [],
+  "dependencies": {
+    "component/cookie": "*",
+    "jabapyth/angularjs": "*",
+    "visionmedia/superagent": "*",
+    "notablemind/settings": "*"
+  },
+  "development": {},
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": [
+    "index.js"
+  ]
+}
