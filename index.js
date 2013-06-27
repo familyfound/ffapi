@@ -24,7 +24,11 @@ angular.module('ffapi', [])
     };
   })
   .factory('ffapi', function (ffauthorize) {
+    var relation_cache = {};
     var ffapi = function (resource, options, next) {
+      if (resource === 'person/status' && relation_cache[options.id]) {
+        relation_cache[options.id].status = options.status;
+      }
       var url = settings.get('main.ffhome') + 'api/' + resource
         , req;
       if (options) {
@@ -38,7 +42,6 @@ angular.module('ffapi', [])
           next && next(res.body);
         });
     };
-    var relation_cache = {};
     ffapi.relation = function (id, next) {
       if (relation_cache[id]) {
         return next(relation_cache[id], true);
