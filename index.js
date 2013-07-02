@@ -4,15 +4,15 @@
 var angular = require('angularjs')
   , request = require('superagent')
   , cookie = require('cookie')
-  , settings = require('settings').sub('ffapi');
+  , settings = require('settings')('ffapi');
 
-settings.add({
-  name: 'main',
-  settings: [{
-    name: 'ffhome',
+settings.config({
+  ffhome: {
     value: '/',
+    title: 'FamilyFound URL',
+    description: 'the FamilyFound URL to use',
     type: 'text'
-  }]
+  }
 });
 
 angular.module('ffapi', [])
@@ -29,7 +29,7 @@ angular.module('ffapi', [])
       if (resource === 'person/status' && relation_cache[options.id]) {
         relation_cache[options.id].status = options.status;
       }
-      var url = settings.get('main.ffhome') + 'api/' + resource
+      var url = settings.get('ffhome') + 'api/' + resource
         , req;
       if (options) {
         req = ffauthorize(request.post(url).send(options));
