@@ -12,6 +12,15 @@ settings.config({
     title: 'FamilyFound URL',
     description: 'the FamilyFound URL to use',
     type: 'text'
+  },
+  cache: {
+    value: 'page',
+    title: 'Caching policy',
+    description: 'How should data be cached?',
+    type: 'select',
+    options: [['page', 'Page - until refresh'],
+              ['session', 'Session - until browser restart'],
+              ['none', 'No caching']]
   }
 });
 
@@ -43,11 +52,21 @@ angular.module('ffapi', [])
         });
     };
     ffapi.relation = function (id, next) {
-      if (relation_cache[id]) {
-        return next(relation_cache[id], true);
+      if (settings.get('cache') !== 'none') {
+        if (!relation_cache[id]) {
+          if (settings.get('cache') === 'session' && sessionStorage['rel.' + id]) {
+            relation_cache[id] = JSON.parse(sessionStorage['rel.' + id]);
+          }
+        }
+        if (relation_cache[id]) {
+          return next(relation_cache[id], true);
+        }
       }
       ffapi('person/relations/' + id, null, function (data) {
         relation_cache[id] = data;
+        if (settings.get('cache') === 'session') {
+          sessionStorage['rel.' + id] = JSON.stringify(data);
+        }
         return next(data, false);
       });
     };
