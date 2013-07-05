@@ -55,7 +55,10 @@ angular.module('ffapi', [])
       if (settings.get('cache') !== 'none') {
         if (!relation_cache[id]) {
           if (settings.get('cache') === 'session' && sessionStorage['rel.' + id]) {
-            relation_cache[id] = JSON.parse(sessionStorage['rel.' + id]);
+            data = JSON.parse(sessionStorage['rel.' + id]);
+            if (!data.error) {
+              relation_cache[id] = data;
+            }
           }
         }
         if (relation_cache[id]) {
