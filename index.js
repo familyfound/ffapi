@@ -18,11 +18,21 @@ settings.config({
     title: 'Caching policy',
     description: 'How should data be cached?',
     type: 'select',
-    options: [['page', 'Page - until refresh'],
-              ['session', 'Session - until browser restart'],
-              ['none', 'No caching']]
+    options: [['Page - until refresh', 'page'],
+              ['Session - until browser restart', 'session'],
+              ['No caching', 'none']]
   }
 });
+
+function updateStatus(status, id) {
+  if (settings.get('cache') === 'session' && sessionStorage['rel.' + id]) {
+    data = JSON.parse(sessionStorage['rel.' + id]);
+    if (data && !data.error) {
+      data.status = status;
+      sessionStorage['rel.' + id] = JSON.stringify(data);
+    }
+  }
+}  
 
 angular.module('ffapi', [])
   .factory('ffauthorize', function () {
@@ -37,6 +47,7 @@ angular.module('ffapi', [])
     var ffapi = function (resource, options, next) {
       if (resource === 'person/status' && relation_cache[options.id]) {
         relation_cache[options.id].status = options.status;
+        updateStatus(options.status, options.id);
       }
       var url = settings.get('ffhome') + 'api/' + resource
         , req;
@@ -56,7 +67,7 @@ angular.module('ffapi', [])
         if (!relation_cache[id]) {
           if (settings.get('cache') === 'session' && sessionStorage['rel.' + id]) {
             data = JSON.parse(sessionStorage['rel.' + id]);
-            if (!data.error) {
+            if (data && !data.error) {
               relation_cache[id] = data;
             }
           }
@@ -76,7 +87,6 @@ angular.module('ffapi', [])
     return ffapi;
   })
   .factory('ffperson', function (ffapi) {
-    // TODO: use localStorage? no. Refresh should give them new data.
     var cache = {};
     return function (personId, nocache, next) {
       if (!next && typeof (nocache) == 'function') {

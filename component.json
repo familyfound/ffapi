@@ -6,7 +6,7 @@
   "keywords": [],
   "dependencies": {
     "component/cookie": "*",
-    "jabapyth/angularjs": "*",
+    "jaredly/angularjs": "*",
     "visionmedia/superagent": "*",
     "notablemind/settings": "*"
   },
