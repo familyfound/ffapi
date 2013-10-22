@@ -2,7 +2,7 @@
   "name": "ffapi",
   "repo": "familyfound/ffapi",
   "description": "interaction with familysearch",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "keywords": [],
   "dependencies": {
     "component/cookie": "*",
