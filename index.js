@@ -43,7 +43,8 @@ angular.module('ffapi', [])
     };
   })
   .factory('ffapi', function (ffauthorize) {
-    var relation_cache = {};
+    var relation_cache = {}
+      , photo_cache = {};
     var ffapi = function (resource, options, next) {
       if (resource === 'person/status' && relation_cache[options.id]) {
         relation_cache[options.id].status = options.status;
@@ -62,7 +63,42 @@ angular.module('ffapi', [])
           next && next(res.body);
         });
     };
+    ffapi.loading = 0;
+    ffapi.loaded = 0;
+    ffapi.clear = function () {
+      sessionStorage.clear();
+      photo_cache = {}
+      relation_cache = {}
+      ffapi.loading = 0;
+      ffapi.loaded = 0;
+    };
+    ffapi.photo = function (id, next) {
+      ffapi.loading += 1;
+      if (settings.get('cache') !== 'none') {
+        if (!photo_cache[id]) {
+          if (settings.get('cache') === 'session' && sessionStorage['photo.' + id]) {
+            data = JSON.parse(sessionStorage['photo.' + id]);
+            if (data && !data.error) {
+              photo_cache[id] = data;
+            }
+          }
+        }
+        if (photo_cache[id]) {
+          ffapi.loaded += 1;
+          return next(photo_cache[id], true);
+        }
+      }
+      ffapi('person/photo/' + id, null, function (data) {
+        relation_cache[id] = data;
+        if (settings.get('cache') === 'session') {
+          sessionStorage['photo.' + id] = JSON.stringify(data);
+        }
+        ffapi.loaded += 1;
+        return next(data, false);
+      });
+    };
     ffapi.relation = function (id, next) {
+      ffapi.loading += 1;
       if (settings.get('cache') !== 'none') {
         if (!relation_cache[id]) {
           if (settings.get('cache') === 'session' && sessionStorage['rel.' + id]) {
@@ -73,6 +109,7 @@ angular.module('ffapi', [])
           }
         }
         if (relation_cache[id]) {
+          ffapi.loaded += 1;
           return next(relation_cache[id], true);
         }
       }
@@ -81,6 +118,7 @@ angular.module('ffapi', [])
         if (settings.get('cache') === 'session') {
           sessionStorage['rel.' + id] = JSON.stringify(data);
         }
+        ffapi.loaded += 1;
         return next(data, false);
       });
     };
