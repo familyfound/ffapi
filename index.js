@@ -42,7 +42,8 @@ angular.module('ffapi', [])
     var cache = {}
     return function (personId, nocache, next) {
       if (!next && typeof (nocache) == 'function') {
-        next = nocache nocache = false
+        next = nocache
+        nocache = false
       }
       if (!nocache && cache[personId]) {
         return next(cache[personId])
