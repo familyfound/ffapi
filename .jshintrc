@@ -1,0 +1,11 @@
+{
+  "laxcomma": true,
+  "browser": true,
+  "undef": true,
+  "-W033": true,
+  "globals": {
+    "module": false,
+    "require": false,
+    "console": false
+  }
+}

@@ -8,4 +8,7 @@ components: component.json
 clean:
 	rm -fr build components template.js
 
+lint:
+	@jshint *.json *.js lib --verbose
+
 .PHONY: clean
