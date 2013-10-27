@@ -8,7 +8,10 @@
     "component/cookie": "*",
     "jaredly/angularjs": "*",
     "visionmedia/superagent": "*",
-    "notablemind/settings": "*"
+    "notablemind/settings": "*",
+    "component/emitter": "*",
+    "segmentio/extend": "*",
+    "paulmillr/async-each": "*"
   },
   "development": {},
   "license": "MIT",
