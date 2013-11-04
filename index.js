@@ -5,6 +5,7 @@ var angular = require('angularjs')
   , request = require('superagent')
   , cookie = require('cookie')
   , settings = require('settings')('ffapi')
+  , io = require('socket.io')
 
   , SessionCache = require('./lib/session')
   , FFApi = require('./lib')
@@ -35,8 +36,11 @@ angular.module('ffapi', [])
       return req
     }
   })
-  .factory('ffapi', function (ffauthorize) {
-    return new FFApi(settings, new SessionCache(sessionStorage), ffauthorize)
+  .factory('iosocket', function () {
+    return io(this.settings.get('ffhome'))
+  })
+  .factory('ffapi', function (iosocket) {
+    return new FFApi(iosocket, settings, new SessionCache(sessionStorage))
   })
   .factory('ffperson', function (ffapi) {
     var cache = {}
